@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Портфолио Lolli</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключение шрифта Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Иконки Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* Общие переходы */
+        body, .liquid-glass, .gallery-card, h1, h2, p, .nav-btn, input, textarea, button {
+            transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        /* Основной стиль */
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #0b1120; 
+            color: #e2e8f0; 
+            padding-bottom: 100px;
+            overflow-x: hidden;
+        }
+        
+        /* Стили для видеофона */
+        #video-bg {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%; 
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -2;
+            object-fit: cover;
+            filter: brightness(0.4);
+        }
+        
+        /* Единый стиль для всех стеклянных элементов */
+        .liquid-glass {
+            background: rgba(30, 41, 59, 0.5); /* Полупрозрачный фон */
+            backdrop-filter: blur(8px); /* ИЗМЕНЕНИЕ: Размытие уменьшено */
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .gallery-card {
+            background: rgba(23, 31, 48, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            break-inside: avoid-column;
+        }
+        
+        .nav-btn {
+            color: #94a3b8;
+        }
+        .nav-btn.active {
+            color: #60a5fa; 
+        }
+
+        h1, h2 {
+             color: #f8fafc;
+        }
+        .subtle-text {
+            color: #94a3b8;
+        }
+        
+        .form-input::placeholder {
+            color: #64748b;
+        }
+
+    </style>
+</head>
+<body class="">
+    <audio id="background-music" src="music.mp3" loop></audio>
+
+    <video autoplay muted loop id="video-bg">
+        <source src="https://v1.pinimg.com/videos/mc/720p/69/0e/dd/690edd729b061a917d21c614665df7f8.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    
+    <div id="music-player" class="liquid-glass fixed top-5 left-5 z-50 rounded-full p-1 sm:p-2 flex items-center space-x-3">
+        <button id="play-pause-btn" class="bg-slate-700/90 rounded-full h-10 w-10 flex items-center justify-center shadow-lg">
+            <i id="play-icon" class="ph-bold ph-play text-xl text-sky-300"></i>
+            <i id="pause-icon" class="ph-bold ph-pause text-xl text-sky-300 hidden"></i>
+        </button>
+        <span class="hidden sm:inline font-semibold pr-3">Music 🎧</span>
+    </div>
+
+
+    <main class="relative w-full flex items-center justify-center p-4 min-h-screen">
+        
+        <div id="home-screen" class="screen-content w-full">
+            <div class="w-full max-w-sm md:max-w-md p-6 mx-auto">
+                <div class="flex flex-col items-center text-center">
+                    <img src="https://i.pinimg.com/736x/79/28/02/7928024ebb01a42a00bfb525f702b647.jpg" alt="Аватар Lolli" class="w-28 h-28 object-cover rounded-full border-4 border-slate-500/20 shadow-xl mb-4">
+                    <h1 class="text-3xl font-extrabold">Lolli</h1>
+                    <div class="mt-2 text-base font-medium subtle-text flex flex-wrap justify-center items-center gap-x-3 gap-y-1">
+                        <span><i class="ph-fill ph-cake mr-1"></i> 21 год</span>
+                        <span class="hidden sm:inline">|</span>
+                        <span><i class="ph-fill ph-briefcase mr-1"></i> Опыт более 3-х лет</span>
+                    </div>
+                     <!-- ИЗМЕНЕНИЕ: Возвращены иконки -->
+                     <div class="flex justify-center space-x-3 mt-4">
+                       <a href="#" class="liquid-glass text-slate-200 rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-slate-600/30"><i class="ph ph-telegram-logo"></i></a>
+                       <a href="#" class="liquid-glass text-slate-200 rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-slate-600/30"><i class="ph ph-instagram-logo"></i></a>
+                       <a href="#" class="liquid-glass text-slate-200 rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-slate-600/30"><i class="ph ph-tiktok-logo"></i></a>
+                    </div>
+                </div>
+                <div class="w-2/3 h-px bg-slate-600 mx-auto my-5"></div>
+                <div class="text-center">
+                    <h2 class="text-xl font-bold mb-4">Что я создаю</h2>
+                    <div class="flex flex-wrap justify-center gap-2 text-xs md:text-sm">
+                        <span class="liquid-glass rounded-full py-2 px-4 font-semibold hover:scale-105">Креативы</span>
+                        <span class="liquid-glass rounded-full py-2 px-4 font-semibold hover:scale-105">Stories</span>
+                        <span class="liquid-glass rounded-full py-2 px-4 font-semibold hover:scale-105">Анимации</span>
+                        <span class="liquid-glass rounded-full py-2 px-4 font-semibold hover:scale-105">Инфографика</span>
+                        <span class="liquid-glass rounded-full py-2 px-4 font-semibold hover:scale-105">Видео</span>
+                        <span class="liquid-glass rounded-full py-2 px-4 font-semibold hover:scale-105">Стиль</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="gallery-screen" class="screen-content w-full hidden">
+            <div class="w-full max-w-6xl mx-auto px-4">
+                 <div class="text-center mb-8">
+                    <h2 class="liquid-glass rounded-full inline-block py-3 px-8 text-3xl font-bold">Галерея работ</h2>
+                 </div>
+                 <div class="columns-2 lg:columns-3 gap-4">
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/3b/d7/4b/3bd74b2b1d403ee726a2d5d78121b2cf.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/89/1b/bf/891bbfc0c8e294301e54172a4183af91.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/4a/de/11/4ade113d972a0aa33eeb27294a6953b6.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/3f/32/4d/3f324d0a79967a0bc503fe96b24eb920.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/00/14/71/0014717ed53752af2b5bca83f3d81f3a.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/30/e4/7a/30e47a2c529af5134459a8f57acfa898.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/38/e3/f3/38e3f312806e148fc6988d576ed7677e.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/00/af/fa/00affa618e49f39fb8a330dd5d604561.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/43/0c/7e/430c7e8815fbd4b57e188ee4889c18ee.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/24/68/f3/2468f310c6d0d684c87dbfaaa07e9f3c.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/02/de/a5/02dea5c3d76a5da636d5464a014e6f98.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/62/8d/9d/628d9d7f68fb9bcc955205d375282d81.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/42/f4/4a/42f44ae1047e0a37a52286f5b275b5de.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/a0/63/68/a063683899847db93c61d3dcdebc21d3.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/e3/03/64/e30364e261ba3fde336e690736491cac.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/55/b1/6c/55b16cc477dbd0db101b4cdeff7213f8.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/3b/71/35/3b71355d028f5c91f1670839b8fe86c7.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/a4/ab/70/a4ab7095bebcee86259311cd61fc5731.jpg" class="w-full h-full object-cover"></div>
+                    <div class="gallery-card mb-4 p-0 overflow-hidden hover:scale-105 rounded-xl md:rounded-2xl lg:rounded-3xl"><img src="https://i.pinimg.com/736x/0c/8d/d1/0c8dd1dc9ae66fc4ec2f9c140ab3719b.jpg" class="w-full h-full object-cover"></div>
+                 </div>
+            </div>
+        </div>
+
+        <div id="profile-screen" class="screen-content w-full hidden">
+             <div class="w-full max-w-sm md:max-w-md mx-auto p-6">
+                <h2 class="text-2xl font-bold text-center mb-1">Начнем сотрудничество?</h2>
+                <p class="text-center subtle-text mb-6 text-sm">Оставьте заявку, и я свяжусь с вами.</p>
+                <form action="https://formspree.io/f/mblypegg" method="POST" class="space-y-4">
+                    <div>
+                        <label for="name" class="font-semibold text-sm">Ваше имя</label>
+                        <input type="text" id="name" name="name" required class="form-input mt-1 w-full p-2 rounded-xl liquid-glass border-transparent focus:border-blue-500 focus:bg-slate-600 outline-none">
+                    </div>
+                    <div>
+                        <label for="email" class="font-semibold text-sm">Ваш Email</label>
+                        <input type="email" id="email" name="email" required class="form-input mt-1 w-full p-2 rounded-xl liquid-glass border-transparent focus:border-blue-500 focus:bg-slate-600 outline-none">
+                    </div>
+                    <div>
+                        <label for="message" class="font-semibold text-sm">Опишите задачу</label>
+                        <textarea id="message" name="message" rows="3" required class="form-input mt-1 w-full p-2 rounded-xl liquid-glass border-transparent focus:border-blue-500 focus:bg-slate-600 outline-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full liquid-glass rounded-full py-2.5 font-bold text-base text-blue-300 hover:bg-slate-600/50">Отправить заявку</button>
+                </form>
+             </div>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 right-0 p-4 z-50">
+        <div class="liquid-glass relative max-w-xs mx-auto rounded-full p-2 flex justify-around items-center">
+            <div id="slider" class="absolute h-12 bg-slate-700/90 rounded-3xl shadow-lg transition-all duration-700 ease-in-out"></div>
+
+            <button id="nav-home" class="nav-btn relative z-10 flex justify-center items-center rounded-full h-12 w-20"><i class="ph-bold ph-house text-3xl"></i></button>
+            <button id="nav-gallery" class="nav-btn relative z-10 flex justify-center items-center rounded-full h-12 w-20"><i class="ph-bold ph-squares-four text-3xl"></i></button>
+            <button id="nav-profile" class="nav-btn relative z-10 flex justify-center items-center rounded-full h-12 w-20"><i class="ph-bold ph-user text-3xl"></i></button>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const screens = document.querySelectorAll('.screen-content');
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const slider = document.getElementById('slider');
+            const navPanel = slider.parentElement;
+
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const audioPlayer = document.getElementById('background-music');
+
+            playPauseBtn.addEventListener('click', () => {
+                const isPlaying = !audioPlayer.paused;
+                if (isPlaying) {
+                    audioPlayer.pause();
+                } else {
+                    audioPlayer.play();
+                }
+                playIcon.classList.toggle('hidden', !isPlaying);
+                pauseIcon.classList.toggle('hidden', isPlaying);
+            });
+
+
+            const navMapping = {
+                'nav-home': 'home-screen',
+                'nav-gallery': 'gallery-screen',
+                'nav-profile': 'profile-screen'
+            };
+
+            function showScreen(screenId, clickedButton) {
+                screens.forEach(screen => screen.classList.add('hidden'));
+                const activeScreen = document.getElementById(screenId);
+                if (activeScreen) activeScreen.classList.remove('hidden');
+
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                clickedButton.classList.add('active');
+                
+                const buttonRect = clickedButton.getBoundingClientRect();
+                const panelRect = navPanel.getBoundingClientRect();
+                
+                const sliderWidth = buttonRect.width - 4;
+                const sliderLeft = (buttonRect.left - panelRect.left) + 2;
+
+                slider.style.width = `${sliderWidth}px`;
+                slider.style.left = `${sliderLeft}px`;
+            }
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetScreenId = navMapping[button.id];
+                    if (targetScreenId) {
+                        showScreen(targetScreenId, button);
+                    }
+                });
+            });
+            
+            setTimeout(() => {
+                showScreen('home-screen', document.getElementById('nav-home'));
+            }, 50);
+        });
+    </script>
+</body>
+</html>
