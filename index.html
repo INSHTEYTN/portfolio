@@ -98,16 +98,23 @@
         <source src="https://v1.pinimg.com/videos/mc/720p/69/0e/dd/690edd729b061a917d21c614665df7f8.mp4" type="video/mp4">
     </video>
 
-    <div id="music-player" class="liquid-glass fixed top-5 left-5 z-20 rounded-full p-1 sm:p-2 flex items-center space-x-3">
-        <button id="play-pause-btn" class="bg-slate-700/90 rounded-full h-10 w-10 flex items-center justify-center shadow-lg">
-            <i id="play-icon" class="ph-bold ph-play text-xl text-sky-300"></i>
-            <i id="pause-icon" class="ph-bold ph-pause text-xl text-sky-300 hidden"></i>
+    <div id="music-player" class="liquid-glass fixed top-5 left-5 z-20 rounded-full p-1 flex flex-col sm:flex-row items-center">
+        <div class="flex items-center space-x-2 p-1">
+            <button id="play-pause-btn" class="bg-slate-700/90 rounded-full h-10 w-10 flex-shrink-0 flex items-center justify-center shadow-lg">
+                <i id="play-icon" class="ph-bold ph-play text-xl text-sky-300"></i>
+                <i id="pause-icon" class="ph-bold ph-pause text-xl text-sky-300 hidden"></i>
+            </button>
+            <span id="music-text" class="hidden sm:inline font-semibold px-2">Music 🎧</span>
+            <button id="next-btn-desktop" class="hidden sm:flex bg-slate-700/90 rounded-full h-10 w-10 items-center justify-center shadow-lg text-sky-300">
+                <i class="ph-bold ph-skip-forward text-xl"></i>
+            </button>
+        </div>
+        <button id="next-btn-mobile" class="hidden bg-slate-700/90 rounded-full h-8 w-8 mt-1 items-center justify-center shadow-lg text-sky-300 sm:hidden">
+            <i class="ph-bold ph-skip-forward text-lg"></i>
         </button>
-        <span class="hidden sm:inline font-semibold pr-3">Music 🎧</span>
     </div>
 
     <main class="relative w-full flex items-center justify-center p-4 min-h-screen">
-        <!-- ИЗМЕНЕНИЕ: Восстановлен контент -->
         <div id="home-screen" class="screen-content w-full">
             <div class="w-full max-w-sm md:max-w-md p-6 mx-auto">
                 <div class="flex flex-col items-center text-center">
@@ -139,7 +146,7 @@
             </div>
         </div>
         <div id="gallery-screen" class="screen-content w-full hidden">
-             <div class="w-full max-w-6xl mx-auto px-4">
+            <div class="w-full max-w-6xl mx-auto px-4">
                  <div class="text-center mb-8">
                     <h2 class="liquid-glass rounded-full inline-block py-3 px-8 text-3xl font-bold">Галерея работ</h2>
                  </div>
@@ -203,7 +210,8 @@
                 <h3 class="text-2xl font-bold glowing-text">Чем могу помочь?</h3>
              </div>
         </div>
-        <footer class="flex-shrink-0 p-3">
+        <footer class="flex-shrink-0 p-2">
+            <div id="image-preview-container" class="px-2 pb-2"></div>
             <form id="chat-form" class="relative flex items-center">
                 <label for="image-upload" class="p-2 cursor-pointer text-slate-400 hover:text-sky-300">
                     <i class="ph-bold ph-paperclip text-2xl"></i>
@@ -211,7 +219,7 @@
                 <input type="file" id="image-upload" class="hidden" accept="image/*">
                 
                 <div class="relative w-full flex items-center">
-                    <textarea id="chat-input" rows="1" class="form-input liquid-glass bg-transparent w-full p-3 pr-12 rounded-full resize-none outline-none border-transparent focus:border-blue-500" placeholder="Спросите..."></textarea>
+                    <textarea id="chat-input" rows="1" class="form-input liquid-glass bg-transparent w-full p-3 pr-12 rounded-full resize-none outline-none border-transparent focus:border-blue-500"></textarea>
                     <button id="send-btn" type="submit" class="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-sky-300 opacity-0 pointer-events-none transition-opacity duration-300">
                         <i class="ph-bold ph-paper-plane-tilt text-2xl"></i>
                     </button>
@@ -237,6 +245,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Объявления всех констант для DOM-элементов
             const screens = document.querySelectorAll('.screen-content');
             const navButtons = document.querySelectorAll('.nav-btn');
             const slider = document.getElementById('slider');
@@ -245,7 +254,10 @@
             const playPauseBtn = document.getElementById('play-pause-btn');
             const playIcon = document.getElementById('play-icon');
             const pauseIcon = document.getElementById('pause-icon');
-            
+            const musicPlayer = document.getElementById('music-player');
+            const nextBtnDesktop = document.getElementById('next-btn-desktop');
+            const nextBtnMobile = document.getElementById('next-btn-mobile');
+            const musicText = document.getElementById('music-text');
             const chatWindow = document.getElementById('chat-window');
             const chatOpenBtn = document.getElementById('chat-open-btn');
             const chatExitBtn = document.getElementById('chat-exit-btn');
@@ -255,19 +267,14 @@
             const chatMessages = document.getElementById('chat-messages');
             const welcomeMessage = document.getElementById('welcome-message');
             const imageUploadInput = document.getElementById('image-upload');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
 
+            // --- КОД ЧАТА ---
+            const GEMINI_API_KEY = "AIzaSyAfukPDZRpxp3Ayds6gmd2mz5tc7qkmNxA"; 
+            const systemInstruction = { role: 'system', parts: [{ text: "Ты — ассистент-помощник дизайнера по имени Lolli. Твоя задача — вежливо и профессионально отвечать на вопросы потенциальных клиентов. Всегда отвечай от лица ассистента, а не от имени Lolli. Вот информация, которую ты должен использовать:\n- Имя дизайнера: Lolli\n- Возраст: 21 год\n- Опыт работы: более 3 лет\n- Количество работ в портфолио: 19\n- Где оставить заявку: на странице 'Профиль', доступной через иконку пользователя в нижней панели навигации.\n- Важное требование к заявке: при подаче заявки клиенту необходимо указать свой номер телефона или ник в Telegram для обратной связи. Всегда напоминай об этом, когда говоришь о заявке." }] };
             let chatHistory = [];
             let isFirstMessage = true;
             let uploadedImageData = null;
-
-            const GEMINI_API_KEY = ""; 
-
-            const systemInstruction = {
-                role: 'system',
-                parts: [{
-                    text: "Ты — ассистент-помощник дизайнера по имени Lolli. Твоя задача — вежливо и профессионально отвечать на вопросы потенциальных клиентов. Всегда отвечай от лица ассистента, а не от имени Lolli. Вот информация, которую ты должен использовать:\n- Имя дизайнера: Lolli\n- Возраст: 21 год\n- Опыт работы: более 3 лет\n- Количество работ в портфолио: 19\n- Где оставить заявку: на странице 'Профиль', доступной через иконку пользователя в нижней панели навигации.\n- Важное требование к заявке: при подаче заявки клиенту необходимо указать свой номер телефона или ник в Telegram для обратной связи. Всегда напоминай об этом, когда говоришь о заявке."
-                }]
-            };
 
             function toggleChat(isOpen) {
                 if (isOpen) {
@@ -278,15 +285,9 @@
                     chatOpenBtn.classList.remove('opacity-0', 'pointer-events-none');
                 }
             }
-            
+
             chatOpenBtn.addEventListener('click', () => toggleChat(true));
             chatExitBtn.addEventListener('click', () => toggleChat(false));
-
-            chatInput.addEventListener('input', () => {
-                const hasText = chatInput.value.trim().length > 0;
-                sendBtn.classList.toggle('opacity-0', !hasText);
-                sendBtn.classList.toggle('pointer-events-none', !hasText);
-            });
 
             imageUploadInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
@@ -295,11 +296,23 @@
                     reader.onload = (event) => {
                         const imageDataUrl = event.target.result;
                         uploadedImageData = imageDataUrl.split(',')[1];
-                        appendMessage({ type: 'image', src: imageDataUrl }, 'user');
-                        chatInput.focus();
+                        imagePreviewContainer.innerHTML = `<div class="relative inline-block"><img src="${imageDataUrl}" class="h-16 w-16 object-cover rounded-lg"><button id="cancel-upload" class="absolute -top-2 -right-2 bg-red-500 rounded-full h-6 w-6 flex items-center justify-center text-white">&times;</button></div>`;
+                        document.getElementById('cancel-upload').addEventListener('click', () => {
+                            uploadedImageData = null;
+                            imagePreviewContainer.innerHTML = '';
+                            imageUploadInput.value = '';
+                        });
+                        sendBtn.classList.add('opacity-100', 'pointer-events-auto');
+                        sendBtn.classList.remove('opacity-0', 'pointer-events-none');
                     };
                     reader.readAsDataURL(file);
                 }
+            });
+
+            chatInput.addEventListener('input', () => {
+                const hasText = chatInput.value.trim().length > 0;
+                sendBtn.classList.toggle('opacity-0', !hasText);
+                sendBtn.classList.toggle('pointer-events-none', !hasText);
             });
 
             chatForm.addEventListener('submit', (e) => {
@@ -307,36 +320,34 @@
                 const userMessage = chatInput.value.trim();
                 if (userMessage || uploadedImageData) {
                     handleUserMessage(userMessage);
+                    imagePreviewContainer.innerHTML = '';
                 }
             });
-            
+
             function handleUserMessage(message) {
-                if(isFirstMessage) {
+                if (isFirstMessage) {
                     welcomeMessage.style.display = 'none';
                     isFirstMessage = false;
                 }
-
                 const userParts = [];
-                if(message) userParts.push({ text: message });
-
+                if (message) userParts.push({ text: message });
                 if (uploadedImageData) {
                     userParts.push({ inlineData: { mimeType: 'image/jpeg', data: uploadedImageData } });
+                    appendMessage({ type: 'image', src: `data:image/jpeg;base64,${uploadedImageData}` }, 'user');
                     uploadedImageData = null;
                 }
-
-                if(userParts.length > 0 && message) {
-                     appendMessage({ type: 'text', content: message }, 'user');
+                if (userParts.length > 0 && message) {
+                    appendMessage({ type: 'text', content: message }, 'user');
                 }
-                
-                chatHistory.push({ role: 'user', parts: userParts });
-
-                const commandMatch = message.match(/^\/(imagine|рисуй)\s+(.*)/);
-                if (commandMatch) {
-                    generateImage(commandMatch[2]);
-                } else {
-                    getGeminiResponse();
+                if (userParts.length > 0) {
+                    chatHistory.push({ role: 'user', parts: userParts });
+                    const commandMatch = message.match(/^\/(imagine|рисуй)\s+(.*)/);
+                    if (commandMatch) {
+                        generateImage(commandMatch[2]);
+                    } else {
+                        getGeminiResponse();
+                    }
                 }
-
                 chatInput.value = '';
                 chatInput.dispatchEvent(new Event('input'));
             }
@@ -344,9 +355,8 @@
             function appendMessage(content, sender) {
                 const messageWrapper = document.createElement('div');
                 messageWrapper.className = `w-full flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
-                
                 let messageBubble;
-                if(content.type === 'image') {
+                if (content.type === 'image') {
                     messageBubble = document.createElement('img');
                     messageBubble.src = content.src;
                     messageBubble.className = 'w-48 h-auto rounded-2xl';
@@ -355,43 +365,29 @@
                     messageBubble.className = `message-bubble p-3 rounded-full ${sender === 'user' ? 'user-bubble' : 'model-bubble'}`;
                     messageBubble.textContent = content.content || content;
                 }
-                
                 messageWrapper.appendChild(messageBubble);
                 chatMessages.appendChild(messageWrapper);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
-
                 return messageBubble;
             }
 
             async function getGeminiResponse() {
                 const modelBubble = appendMessage('', 'model');
                 modelBubble.innerHTML = '<div class="h-2 w-2 bg-slate-400 rounded-full animate-pulse"></div>';
-
                 try {
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${AIzaSyAfukPDZRpxp3Ayds6gmd2mz5tc7qkmNxA}&alt=sse`;
-                    
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${GEMINI_API_KEY}&alt=sse`;
                     const payload = { contents: [systemInstruction, ...chatHistory] };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload),
-                    });
-
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                     const reader = response.body.getReader();
                     const decoder = new TextDecoder();
-                    let buffer = '';
-                    let fullResponse = '';
-
-                    modelBubble.innerHTML = ''; 
-
+                    let buffer = '', fullResponse = '';
+                    modelBubble.innerHTML = '';
                     while (true) {
                         const { value, done } = await reader.read();
                         if (done) break;
                         buffer += decoder.decode(value, { stream: true });
                         const lines = buffer.split('\n');
                         buffer = lines.pop();
-
                         for (const line of lines) {
                             if (line.startsWith('data: ')) {
                                 const jsonStr = line.substring(6);
@@ -401,25 +397,21 @@
                                     fullResponse += textPart;
                                     modelBubble.textContent = fullResponse;
                                     chatMessages.scrollTop = chatMessages.scrollHeight;
-                                } catch (error) { /* Ignore incomplete JSON */ }
+                                } catch (error) {}
                             }
                         }
                     }
                     chatHistory.push({ role: 'model', parts: [{ text: fullResponse }] });
-
                 } catch (error) {
                     modelBubble.textContent = "Произошла ошибка.";
                     console.error("Error fetching Gemini response:", error);
                 }
             }
-            
+
             function getGenerationLimit() {
                 const limitData = JSON.parse(localStorage.getItem('imageGenLimit')) || {};
                 const today = new Date().toISOString().split('T')[0];
-                if (limitData.date !== today) {
-                    return { date: today, count: 0 };
-                }
-                return limitData;
+                return limitData.date !== today ? { date: today, count: 0 } : limitData;
             }
 
             function saveGenerationLimit(limitData) {
@@ -429,60 +421,59 @@
             async function generateImage(prompt) {
                 let limit = getGenerationLimit();
                 if (limit.count >= 5) {
-                    appendMessage({content: "Вы достигли дневного лимита (5 генераций). Попробуйте завтра."}, 'model');
+                    appendMessage({ content: "Вы достигли дневного лимита (5 генераций). Попробуйте завтра." }, 'model');
                     return;
                 }
-
-                const modelBubble = appendMessage({content: ''}, 'model');
+                const modelBubble = appendMessage({ content: '' }, 'model');
                 modelBubble.innerHTML = '<div>Генерация изображения... <div class="h-2 w-2 bg-slate-400 rounded-full animate-pulse inline-block"></div></div>';
-                
                 try {
-                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`;
-                     const payload = { instances: [{ prompt: prompt }], parameters: { "sampleCount": 1 } };
-                     
-                     const response = await fetch(apiUrl, {
-                         method: 'POST',
-                         headers: { 'Content-Type': 'application/json' },
-                         body: JSON.stringify(payload)
-                     });
-
-                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                     
-                     const result = await response.json();
-                     if (result.predictions && result.predictions[0].bytesBase64Encoded) {
-                         const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-                         modelBubble.remove();
-                         appendMessage({ type: 'image', src: imageUrl }, 'model');
-                         limit.count++;
-                         saveGenerationLimit(limit);
-                     } else {
-                         throw new Error('No image data in response.');
-                     }
-                } catch(error) {
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`;
+                    const payload = { instances: [{ prompt: prompt }], parameters: { "sampleCount": 1 } };
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const result = await response.json();
+                    if (result.predictions && result.predictions[0].bytesBase64Encoded) {
+                        const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                        modelBubble.remove();
+                        appendMessage({ type: 'image', src: imageUrl }, 'model');
+                        limit.count++;
+                        saveGenerationLimit(limit);
+                    } else {
+                        throw new Error('No image data in response.');
+                    }
+                } catch (error) {
                     modelBubble.textContent = "Не удалось создать изображение. Попробуйте другой запрос.";
                     console.error("Image generation error:", error);
                 }
             }
-            
+
+            // --- КОД ДЛЯ НАВИГАЦИИ И ПЛЕЕРА ---
             playPauseBtn.addEventListener('click', () => {
                 const isPlaying = !audioPlayer.paused;
-                if (isPlaying) { audioPlayer.pause(); } else { audioPlayer.play(); }
-                playIcon.classList.toggle('hidden', !isPlaying);
-                pauseIcon.classList.toggle('hidden', isPlaying);
+                if (isPlaying) {
+                    audioPlayer.pause();
+                    musicText.classList.remove('hidden');
+                    nextBtnDesktop.classList.add('hidden');
+                    nextBtnMobile.classList.add('hidden');
+                    musicPlayer.classList.remove('flex-col');
+                } else {
+                    audioPlayer.play();
+                    musicText.classList.add('hidden');
+                    nextBtnDesktop.classList.remove('hidden');
+                    nextBtnMobile.classList.remove('hidden');
+                    musicPlayer.classList.add('flex-col');
+                }
+                playIcon.classList.toggle('hidden', isPlaying);
+                pauseIcon.classList.toggle('hidden', !isPlaying);
             });
 
-            const navMapping = {
-                'nav-home': 'home-screen',
-                'nav-gallery': 'gallery-screen',
-                'nav-profile': 'profile-screen'
-            };
+            const navMapping = { 'nav-home': 'home-screen', 'nav-gallery': 'gallery-screen', 'nav-profile': 'profile-screen' };
 
             function showScreen(screenId, clickedButton) {
                 screens.forEach(screen => screen.classList.add('hidden'));
                 document.getElementById(screenId)?.classList.remove('hidden');
                 navButtons.forEach(btn => btn.classList.remove('active'));
                 clickedButton.classList.add('active');
-                
                 const buttonRect = clickedButton.getBoundingClientRect();
                 const panelRect = navPanel.getBoundingClientRect();
                 slider.style.width = `${buttonRect.width - 4}px`;
